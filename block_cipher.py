@@ -2,6 +2,9 @@ import binascii
 
 
 class BlockCipher:
+    key_length = 128
+    block_length = 64
+
     def __init__(self, plaintext, key):
         pass
 
@@ -34,13 +37,23 @@ class BlockCipher:
                 ans += "1"
         return ans
 
-    def chunk(text, size, length):
-        return [text[length * i : length * i + length] for i in range(size)]
+    def chunk(text, length, size=0):
+        max_size = len(text) // length
+        if size == 0 or size > max_size:
+            size = max_size
+
+        ans = [text[length * i : length * i + length] for i in range(size)]
+
+        last_index = size * length
+        if size == 0 and last_index < len(text):
+            ans.append(text[last_index:])
+
+        return ans
 
     def keygen(key):
         sub_keys = []
         for i in range(7):
-            sub_keys.extend(BlockCipher.chunk(key, 8, 16))
+            sub_keys.extend(BlockCipher.chunk(key, 16))
             key = BlockCipher.rotate(key, 25)
         return sub_keys
 
@@ -68,16 +81,10 @@ class BlockCipher:
         step4 = BlockCipher.multiply(p[3], k[3])
         return [step1, step2, step3, step4]
 
-    def encrypt(plaintext, key):
-        plaintext = BlockCipher.get_binary(plaintext)
-        key = BlockCipher.get_binary(key)
-
-        if len(key) != 128 or len(plaintext) != 64:
-            return None
-
+    def encrypt_block(plaintext, key):
         sub_keys = BlockCipher.keygen(key)
 
-        ciphertext = BlockCipher.chunk(plaintext, 4, 16)
+        ciphertext = BlockCipher.chunk(plaintext, 16)
         for i in range(8):
             ciphertext = BlockCipher.round_calculation(
                 ciphertext, sub_keys[6 * i : 6 * i + 6]
@@ -86,6 +93,17 @@ class BlockCipher:
         ciphertext = BlockCipher.output_transformation(ciphertext, sub_keys[48:52])
 
         return "".join(ciphertext)
+
+    def encrypt(plaintext, key, mode=""):
+        plaintext = BlockCipher.get_binary(plaintext)
+        key = BlockCipher.get_binary(key)
+
+        blocks = BlockCipher.chunk(plaintext, BlockCipher.block_length)
+        return BlockCipher.encrypt_block(blocks[0], key)
+        # if mode == "CBC":
+        #     pass
+        # elif mode == "CTR":
+        #     pass
 
 
 plaintext = b"\x00\x11\x22\x33\x44\x55\x66\x77"
