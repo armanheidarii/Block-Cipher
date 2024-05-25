@@ -166,10 +166,10 @@ class BlockCipher:
             return BlockCipher.encrypt_EBC(blocks, key)
 
         if mode == "CBC":
-            return BlockCipher.get_hex(BlockCipher.encrypt_CBC(blocks, key))
+            return BlockCipher.encrypt_CBC(blocks, key)
 
         if mode == "CTR":
-            return BlockCipher.get_hex(BlockCipher.encrypt_CTR(blocks, key))
+            return BlockCipher.encrypt_CTR(blocks, key)
 
 
 plaintext = b"\x00\x11\x22\x33\x44\x55\x66\x77"
