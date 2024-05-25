@@ -1,31 +1,35 @@
 import binascii
+import random
 
 
 class BlockCipher:
     key_length = 128
     block_length = 64
 
-    def __init__(self, plaintext, key):
+    def __init__(self):
         pass
 
-    def get_binary(plaintext):
-        hex_string = binascii.hexlify(plaintext)
+    def get_binary(hex_string):
+        hex_string = binascii.hexlify(hex_string)
         return bin(int(hex_string, 16))[2:].zfill(len(hex_string) * 4)
+
+    def get_hex(binary_string):
+        return hex(int(binary_string, 2))
 
     def rotate(string, n):
         return string[n:] + string[:n]
 
-    def multiply(p, k):
+    def multiply(p, k, size=16, mod=2**16 + 1):
         multiplication = int(p, 2) * int(k, 2)
-        return bin(multiplication % (2**16 + 1))[2:].zfill(16)
+        return bin(multiplication % mod)[2:].zfill(size)
 
-    def add(p, k):
+    def add(p, k, size=16, mod=2**16):
         addition = int(p, 2) + int(k, 2)
-        return bin(addition % (2**16))[2:].zfill(16)
+        return bin(addition % mod)[2:].zfill(size)
 
-    def xor(p, k):
-        p = p.zfill(16)
-        k = k.zfill(16)
+    def xor(p, k, size=16):
+        p = p.zfill(size)
+        k = k.zfill(size)
 
         ans = ""
         n = len(p)
@@ -94,16 +98,78 @@ class BlockCipher:
 
         return "".join(ciphertext)
 
-    def encrypt(plaintext, key, mode=""):
+    def padding(block):
+        block += "1"
+        for i in range(BlockCipher.block_length - len(block)):
+            block += "0"
+        return block
+
+    def generate_IV(n):
+        key1 = ""
+
+        for i in range(n):
+            temp = str(random.randint(0, 1))
+            key1 += temp
+
+        return key1
+
+    def encrypt_EBC(blocks, key):
+        cipher_blocks = []
+
+        for block in blocks:
+            cipher_blocks.append(BlockCipher.encrypt_block(block, key))
+
+        return "".join(cipher_blocks)
+
+    def encrypt_CBC(blocks, key):
+        iv = BlockCipher.generate_IV(BlockCipher.block_length)
+
+        cipher_blocks = []
+
+        ciphertext = iv
+        for block in blocks:
+            ciphertext = BlockCipher.encrypt_block(
+                BlockCipher.xor(ciphertext, block), key
+            )
+            cipher_blocks.append(ciphertext)
+
+        return "".join(cipher_blocks)
+
+    def encrypt_CTR(blocks, key):
+        iv = BlockCipher.generate_IV(BlockCipher.block_length)
+
+        cipher_blocks = []
+
+        for i in range(len(blocks)):
+            cipher_blocks.append(
+                BlockCipher.xor(
+                    BlockCipher.encrypt_block(
+                        BlockCipher.add(iv, f"{i}", size=64, mod=2**64), key
+                    ),
+                    blocks[i],
+                )
+            )
+
+        return "".join(cipher_blocks)
+
+    def encrypt(plaintext, key, mode="ECB"):
         plaintext = BlockCipher.get_binary(plaintext)
         key = BlockCipher.get_binary(key)
 
         blocks = BlockCipher.chunk(plaintext, BlockCipher.block_length)
-        return BlockCipher.encrypt_block(blocks[0], key)
-        # if mode == "CBC":
-        #     pass
-        # elif mode == "CTR":
-        #     pass
+
+        last_blocks_index = len(blocks) - 1
+        if len(blocks[last_blocks_index]) < BlockCipher.block_length:
+            blocks[last_blocks_index] = BlockCipher.padding(blocks[last_blocks_index])
+
+        if mode == "ECB":
+            return BlockCipher.encrypt_EBC(blocks, key)
+
+        if mode == "CBC":
+            return BlockCipher.get_hex(BlockCipher.encrypt_CBC(blocks, key))
+
+        if mode == "CTR":
+            return BlockCipher.get_hex(BlockCipher.encrypt_CTR(blocks, key))
 
 
 plaintext = b"\x00\x11\x22\x33\x44\x55\x66\x77"
