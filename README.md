@@ -40,15 +40,11 @@ python tests/test.py
 The designed block encryption algorithm takes 64-bit plaintext and 128-bit key as input, and produces 64-bit ciphertext as output. The general structure of the algorithm is as follows:
 <p align="center">
 <img alt = "Block Cipher Image"
-    src="https://drive.google.com/uc?export=view&id=16PGbAgkTeLaTW96VJYVZz9ZcHPf-jWl5">
+    src="https://drive.google.com/uc?export=view&id=1ZBBFRfeDk9gTQ_VGUEaDxPCeBuZvcoWT">
 </p>
 
 As shown in the figure, this algorithm has 8 main **Round**s and a final **Output Transformation** round. In each round, the 64-bit input is received as 4 16-bit data blocks, and 6 16-bit subkeys are used in each round. The structure of each Round is as follows:
 
-<p align="center">
-<img alt = "Block Cipher Image"
-    src="https://drive.google.com/uc?export=view&id=">
-</p>
 
 The final round of this algorithm also receives 4 16-bit data blocks and uses 4 16-bit subkeys to ultimately construct the final ciphertext. The structure of Output Transformation is as follows:
 
