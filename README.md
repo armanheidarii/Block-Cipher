@@ -43,9 +43,28 @@ The designed block encryption algorithm takes 64-bit plaintext and 128-bit key a
     src="https://drive.google.com/uc?export=view&id=1ZBBFRfeDk9gTQ_VGUEaDxPCeBuZvcoWT">
 </p>
 
+### Round
 As shown in the figure, this algorithm has 8 main **Round**s and a final **Output Transformation** round. In each round, the 64-bit input is received as 4 16-bit data blocks, and 6 16-bit subkeys are used in each round. The structure of each Round is as follows:
 
+Step 1: Multiply p1 and K1<br />
+Step 2: Add p2 and K2<br />
+Step 3: Add p3 and K3<br />
+Step 4: Add p4 and K4<br />
+Step 5: XOR Step1 and Step3<br />
+Step 6: XOR Step2 and Step4<br />
+Step 7: Multiply Step5 and K5<br />
+Step 8: Add Step6 and Step7<br />
+Step 9: Multiply Step8 and K6<br />
+Step 10: Add Step7 and Step9<br />
+Step 11: XOR Step1 and Step9 (p1)<br />
+Step 12: XOR Step3 and Step9 (p2)<br />
+Step 13: XOR Step2 and Step10 (p3)<br />
+Step 14: XOR Step4 and Step10 (p4)<br />
 
++ The three main operations of this algorithm are XOR, addition modulo 2<sup>16</sup>, and multiplication modulo 2<sup>16</sup>.
++ The values of step 11, step 12, step 13, and step 14 are equivalent to p1, p2, p3, p4 of the next Round, respectively.
+
+### Output Transformation
 The final round of this algorithm also receives 4 16-bit data blocks and uses 4 16-bit subkeys to ultimately construct the final ciphertext. The structure of Output Transformation is as follows:
 
 <p align="center">
@@ -53,8 +72,7 @@ The final round of this algorithm also receives 4 16-bit data blocks and uses 4 
     src="https://drive.google.com/uc?export=view&id=1dPnm-63SGeUR_lbBTvYpOA_lyR2tlWfY">
 </p>
 
-The three main operations of this algorithm are XOR, addition modulo 2<sup>16</sup>, and multiplication modulo 2<sup>16</sup>.
-
+### Modes of Operation
 For the integration of blocks and the conversion of multi-block plaintext to ciphertext, this algorithm uses the following mode operations:
 
 + Cipher Block Chaining (CBC)
