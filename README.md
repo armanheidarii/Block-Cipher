@@ -18,6 +18,14 @@ A block cipher is a method of encrypting data in blocks to produce ciphertext us
 
 A block cipher takes a block of plaintext bits and generates a block of ciphertext bits, generally of the same size. The size of the block is fixed in the given scheme. The choice of block size does not directly affect the strength of the encryption scheme. The strength of the cipher depends on the key length.
 
+### Block Cipher Modes of Operation
+
+There are several modes of operation for block ciphers, each with its own characteristics:
++ Electronic Codebook (ECB): A simple mode where each block of plaintext is encrypted independently, without any chaining or feedback.
++ Cipher Block Chaining (CBC): The most common mode, where each block of plaintext is XORed with the previous block of ciphertext before encryption.
++ Counter (CTR): A mode where a counter is used to generate a unique initialization vector (IV) for each block of plaintext.
+
+
 ## Usage
 ```bash
 python main.py
