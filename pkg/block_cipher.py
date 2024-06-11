@@ -170,10 +170,3 @@ class BlockCipher:
 
         if mode == "CTR":
             return BlockCipher.encrypt_CTR(blocks, key)
-
-
-plaintext = b"\x00\x11\x22\x33\x44\x55\x66\x77"
-key = b"\x81\x23\x45\x67\x89\xab\xcd\xef\xfe\xdc\xba\x98\x76\x54\x32\x18"
-
-print(BlockCipher.encrypt(plaintext, key))
-print(BlockCipher.get_binary(b"2\x0b\x92\xedNe \x90"))
