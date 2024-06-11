@@ -19,7 +19,7 @@ class BlockCipher:
     def rotate(string, n):
         return string[n:] + string[:n]
 
-    def multiply(p, k, size=16, mod=2**16 + 1):
+    def multiply(p, k, size=16, mod=2**16):
         multiplication = int(p, 2) * int(k, 2)
         return bin(multiplication % mod)[2:].zfill(size)
 

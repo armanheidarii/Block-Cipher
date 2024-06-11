@@ -14,7 +14,7 @@ class TestBlockCipher(unittest.TestCase):
 
         self.assertEqual(
             BlockCipher.encrypt(plaintext, key),
-            BlockCipher.get_binary(b"2\x0b\x92\xedNe \x90"),
+            "0101010111110100000110001011001000100101010001001011001101110110",
         )
 
 
