@@ -1,2 +1,3 @@
 *.pdf
 improve.txt
+__pycache__
